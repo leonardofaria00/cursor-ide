@@ -1,6 +1,8 @@
 You are an expert in Java programming, Spring Boot, Spring Framework, Gradlew, Cucumber, Wiremock, AWS Services, AWS SDK, JUnit, and related Java technologies.
 
-Code Style and Structure
+## General Guidelines
+
+### Code Style and Structure
 
 - Write clean, efficient, and well-documented Java code with accurate Spring Boot 3.5.5 examples.
 - Use Spring Boot best practices and conventions throughout the code.
@@ -14,66 +16,66 @@ Code Style and Structure
 - Keep business logic inside the `domain` layer, not in controllers or infrastructure.
 - Ensure separation of concerns between layers with dependency direction: `infrastructure → application → domain`.
 
-Spring Boot Specifics
+### Spring Boot Specifics
 
 - Use Spring Boot starters for quick project setup and dependency management.
 - Implement proper use of annotations (e.g., @SpringBootApplication, @RestController, @Service, @Repository, @Component).
 - Utilize Spring Boot's auto-configuration features effectively.
 - Implement proper exception handling using @ControllerAdvice and @ExceptionHandler.
 
-Naming Conventions
+### Naming Conventions
 
 - Use PascalCase for class names (e.g., UserController, UserService, UserServiceImpl, UserRepository, UserRepositoryImpl).
 - Use camelCase for method and variable names (e.g., findUserById, isOrderValid).
 - Use ALL_CAPS for constants (e.g., MAX_RETRY_ATTEMPTS, DEFAULT_PAGE_SIZE).
 
-Java and Spring Boot Usage
+### Java and Spring Boot Usage
 
 - Use Java 17 features when applicable (e.g., records, sealed classes, pattern matching).
 - Leverage Spring Boot 3.5.5 features and best practices.
 - Use Spring Data JPA for database operations when applicable.
 - Implement proper validation using Bean Validation (e.g., @Valid, custom validators).
 
-Configuration and Properties
+### Configuration and Properties
 
 - Use bootstrap-integration-test.yml for configuration.
 - Implement environment-specific configurations using Spring Profiles (integration-test).
 - Use @ConfigurationProperties for type-safe configuration properties.
 
-Dependency Injection and IoC
+### Dependency Injection and IoC
 
 - Use constructor injection over field injection for better testability.
 - Leverage Spring's IoC container for managing bean lifecycles.
 
-Performance and Scalability
+### Performance and Scalability
 
 - Implement caching strategies using Spring Cache abstraction.
 - Use async processing with @Async for non-blocking operations.
 - Implement proper database indexing and query optimization.
 
-Security
+### Security
 
 - Implement Spring Security for authentication and authorization.
 - Use proper password encoding (e.g., BCrypt).
 - Implement CORS configuration when necessary.
 
-Logging and Monitoring
+### Logging and Monitoring
 
 - Use SLF4J with Logback for logging.
 - Implement proper log levels (ERROR, WARN, INFO, DEBUG).
 - Use Spring Boot Actuator for application monitoring and metrics.
 
-API Documentation
+### API Documentation
 
 - Use Springdoc OpenAPI (formerly Swagger) for API documentation.
 
-Data Access and ORM
+### Data Access and ORM
 
 - Use Spring Data JPA for database operations.
 - Implement proper entity relationships and cascading.
 - Use database migrations with tools like Flyway or Liquibase.
 
-Build and Deployment
+### Build and Deployment
 
 - Use Gradle for dependency management and build processes.
 - Implement proper profiles for different environments (dev, test, prod).
@@ -551,7 +553,7 @@ void shouldValidateEmail(String email) {
   - Ensure no functionality is broken
   - Update documentation if needed
 
-Git and Version Control
+## Git and Version Control
 
 - NEVER commit changes without explicit user authorization
 - Only use git add, git commit, and git push commands when the user explicitly requests it
@@ -560,7 +562,7 @@ Git and Version Control
 - When making changes to files, ask if you can add them to stash (git add) but wait for user approval before committing
 - Commits will only be performed when explicitly requested by the user
 
-# Regras de IA do projeto
+## Regras de IA do projeto
 
 - Idioma: Sempre escreva mensagens de commit em Português do Brasil (pt-BR).
 - Estilo: Use o padrão Conventional Commits (feat, fix, chore, refactor, docs, test, ci, build, perf, style).
