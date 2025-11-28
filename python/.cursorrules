@@ -1,0 +1,257 @@
+You are an expert in Python, Falcon, and scalable API development.
+
+Key Principles
+
+- Write concise, technical responses with accurate Python examples.
+- Use functional, declarative programming; avoid classes where possible except for Falcon resource classes.
+- Prefer iteration and modularization over code duplication.
+- Use descriptive variable names with auxiliary verbs (e.g., is_active, has_permission).
+- Use lowercase with underscores for directories and files (e.g., api/user_routes.py).
+- Favor named exports for routes and utility functions.
+- Use the Receive an Object, Return an Object (RORO) pattern where applicable.
+
+Python/Falcon
+
+- Use def for function definitions.
+- Use type hints for all function signatures where possible.
+- File structure: Falcon app initialization, resource classes, models, utilities, config.
+- Avoid unnecessary curly braces in conditional statements.
+- For single-line statements in conditionals, omit curly braces.
+- Use concise, one-line syntax for simple conditional statements (e.g., if condition: do_something()).
+
+Project-Specific Architecture
+
+This project follows a specific architecture pattern for a transaction authorization system:
+
+1. **API Layer Structure**:
+
+   - Resource classes inherit from LoggerMixin for consistent logging
+   - Use @falcon.before decorators for validation pipelines
+   - Multiple validators chained in specific order: headers → contract → passwords → business rules
+   - Custom error serializers with falcon_error_serializer
+
+2. **Service Layer Pattern**:
+
+   - Services are stateful classes with instance variables for request context
+   - Services integrate multiple external clients (CPQD, Topaz, Unicred, AppVisa BFF)
+   - Use dependency injection pattern in service constructors
+   - Services handle complex business logic and orchestration
+
+3. **Client Integration Pattern**:
+
+   - HTTP clients inherit from LoggerMixin
+   - Environment variables for configuration (host, path, timeouts)
+   - Structured logging for all external requests/responses
+   - Consistent error handling with HTTPError catching and custom Response objects
+
+4. **Data Model Conventions**:
+
+   - PynamoDB models with environment-based table names
+   - TTL attributes for automatic data expiration
+   - Repository pattern with static methods for database operations
+   - Structured logging for all database operations with logCategory
+
+5. **Validation Pipeline**:
+   - Falcon hooks for request validation using @falcon.before
+   - Validators modify request.context['body_json'] for downstream processing
+   - Early validation returns with appropriate HTTP error codes
+   - Business rule validators check transaction states and expiration
+
+Error Handling and Validation
+
+- Prioritize error handling and edge cases:
+  - Handle errors and edge cases at the beginning of functions.
+  - Use early returns for error conditions to avoid deeply nested if statements.
+  - Place the happy path last in the function for improved readability.
+  - Avoid unnecessary else statements; use the if-return pattern instead.
+  - Use guard clauses to handle preconditions and invalid states early.
+  - Implement proper error logging and user-friendly error messages.
+  - Use custom error types or error factories for consistent error handling.
+
+Dependencies
+
+- Falcon (for high-performance web APIs)
+- Gunicorn or Waitress (for WSGI HTTP Server)
+- PynamoDB (for DynamoDB ORM)
+- PyJWT (for JWT authentication)
+- Structlog (for structured logging)
+- Requests (for HTTP client integrations)
+- Boto3 (for AWS services integration)
+- Pytz (for timezone handling)
+- Falcon-Caching (for caching layer)
+- Autodynatrace (for monitoring and observability)
+
+Falcon-Specific Guidelines
+
+- Use Falcon resource classes with HTTP method handlers (on_get, on_post, etc.).
+- Organize APIs using resource classes for better code organization.
+- Implement custom error handlers using Falcon's set_error_serializer.
+- Use Falcon middleware for request/response processing and cross-cutting concerns.
+- Utilize Falcon hooks for request lifecycle management (before and after hooks).
+- Use Falcon's built-in request and response objects for handling HTTP operations.
+- Implement proper logging using structlog or Python's logging module.
+- Use PyJWT for handling authentication and authorization with custom middleware.
+
+Project-Specific Patterns
+
+1. **Logging Standards**:
+
+   - Use LoggerMixin for all classes requiring logging capabilities
+   - Include logCategory in all log entries for better searchability
+   - Log external integrations with structured request/response data
+   - Mask sensitive data (passwords, biometric images) in logs using custom functions
+
+2. **Environment Configuration**:
+
+   - Use os.environ.get() for all configuration values
+   - Standardize environment variable naming: SERVICE_CLIENT_TYPE_PROPERTY
+   - Configure timeouts, hosts, and paths through environment variables
+   - Use region-based configuration for AWS services
+
+3. **Error Handling Pattern**:
+
+   - Use custom HttpBuildResponse exceptions for API errors
+   - Implement consistent error codes and messages
+   - Log errors with context (document, uuid, transaction details)
+   - Handle external service unavailability with fallback logic
+
+4. **Data Processing**:
+
+   - Use Data Model classes for complex request/response mapping
+   - Implement to_dict() methods for serialization
+   - Use Enum classes for constants (TransactionType, CpqdEventTypeEnum)
+   - Apply data transformation in dedicated mapping classes
+
+5. **Security Practices**:
+   - Extract JWT claims using dedicated utility functions
+   - Validate all inputs through Falcon hooks before processing
+   - Implement request masking for sensitive data in logs
+   - Use structured headers validation (TRAFFIC-\* headers)
+
+Performance Optimization
+
+- Use Falcon-Caching or custom caching solutions for frequently accessed data.
+- Implement database query optimization techniques (e.g., eager loading, indexing).
+- Use connection pooling for database connections.
+- Implement proper database session management with PynamoDB.
+- Use background tasks for time-consuming operations (e.g., Celery or AWS SQS/SNS).
+
+Key Conventions
+
+1. Use Falcon's request and response objects for handling HTTP operations.
+2. Prioritize API performance metrics (response time, latency, throughput).
+3. Structure the application:
+
+   - Use resource classes for modularizing the application.
+   - Implement a clear separation of concerns (API resources, business logic, data access).
+   - Use environment variables for configuration management.
+
+Database Interaction
+
+- Use PynamoDB for DynamoDB ORM operations.
+- Implement proper table definitions using PynamoDB models.
+- Use PynamoDB's connection management and handle exceptions appropriately.
+- Follow the Repository pattern with static methods for database operations.
+- Use environment variables for table names and region configuration.
+- Implement TTL attributes for automatic data expiration.
+- Handle PynamoDB exceptions (GetError, PutError, DoesNotExist) gracefully.
+- Use structured logging for all database operations with consistent logCategory.
+
+Serialization and Validation
+
+- Use custom Data Model classes for request/response mapping (no Marshmallow in this project).
+- Implement to_dict() methods in data models for JSON serialization.
+- Use Falcon hooks (@falcon.before) for input validation pipelines.
+- Chain validators in logical order: authorization_headers → authorization_contract → business_rules.
+- Modify request.context['body_json'] in validators for downstream processing.
+- Use Enum classes for type validation and constants.
+
+Authentication and Authorization
+
+- Implement JWT-based authentication using PyJWT.
+- Use JwtUtil class for extracting claims from JWT tokens.
+- Validate AUTHORIZATION header in request validation pipelines.
+- Support both JWT and document-based authentication (TRAFFIC-DOCUMENT header).
+- Use structured headers (TRAFFIC-\*) for device tracking and session management.
+
+Testing
+
+- Write unit tests using pytest.
+- Use Falcon's test client for integration testing.
+- Implement test fixtures for database and application setup.
+- Organize test data by scenarios (happy_scenarios, sad_scenarios).
+- Use separate test application (testapp.py) for testing configuration.
+- Create mock data for external service integrations (DynamoDB tables, HTTP clients).
+
+API Documentation
+
+- Document API endpoints following the established URL pattern: /sdk-visa-v1/module/authorizer/transaction/{uuid}
+- Include all HTTP method variants (POST for authorization, GET for status checking)
+- Document required headers: AUTHORIZATION, TRAFFIC-\* headers for device tracking
+- Specify request/response schemas for each transaction type
+- Include error response codes and their meanings (3020-3024 range for business errors)
+
+Deployment
+
+- Use Gunicorn, Waitress, or uWSGI as WSGI HTTP Server.
+- Implement proper logging and monitoring in production.
+- Use environment variables for sensitive information and configuration.
+- Configure structured logging with JSON output for production environments.
+- Use LOG_MODE environment variable to switch between LOCAL and JSON logging.
+- Include Autodynatrace for application performance monitoring.
+- Configure middleware stack: Telemetry for request logging, custom error serializers.
+
+File Organization Standards
+
+1. **Directory Structure**:
+
+   - `/api/` - Falcon resource classes
+   - `/client/` - External HTTP service clients
+   - `/common/` - Shared utilities, middleware, logging, validators
+   - `/domain/data/model/` - Data transfer objects and request/response models
+   - `/enums/` - Constants and enumeration classes
+   - `/repository/` - Database access layer using PynamoDB
+   - `/service/` - Business logic layer
+   - `/util/` - Utility functions (JWT, UUID, filtering)
+
+2. **Naming Conventions**:
+
+   - Classes: PascalCase (AuthorizationApi, AppVisaBffClient)
+   - Files: PascalCase for classes, lowercase_with_underscores for modules
+   - Methods: snake_case following Python conventions
+   - Environment variables: UPPERCASE_WITH_UNDERSCORES
+   - Log categories: camelCase (logCategory="CreatePayloadFromTopaz")
+
+3. **Import Patterns**:
+   - Use relative imports within the app package
+   - Import specific classes/functions rather than entire modules
+   - Group imports: standard library, third-party, local application
+
+Refer to Falcon documentation for detailed information on Resources, Middleware, and Hooks for best practices.
+
+Git and Version Control
+
+- NEVER commit changes without explicit user authorization
+- Only use git add, git commit, and git push commands when the user explicitly requests it
+- Always ask for permission before creating commits, even for small changes
+- The user must explicitly say "commit" or "create a commit" to authorize git commits
+- When making changes to files, ask if you can add them to stash (git add) but wait for user approval before committing
+- Commits will only be performed when explicitly requested by the user
+
+# Regras de IA do projeto
+
+- Idioma: Sempre escreva mensagens de commit em Português do Brasil (pt-BR).
+- Estilo: Use o padrão Conventional Commits (feat, fix, chore, refactor, docs, test, ci, build, perf, style).
+- Voz: Imperativo, claro e conciso.
+- Resumo: no máximo 72 caracteres.
+- Não traduza os tipos; traduza o restante do texto para pt-BR.
+
+## Formato esperado do commit
+tipo(escopo opcional): resumo curto em pt-BR
+
+- Detalhes adicionais em pt-BR (opcional, com marcadores)
+- Contexto, motivação e efeitos colaterais (se houver)
+
+BREAKING CHANGE: descrição em pt-BR (se aplicável)
+
+Refs: #<id-issue> (opcional)  
