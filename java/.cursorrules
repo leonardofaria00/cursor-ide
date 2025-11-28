@@ -2,17 +2,16 @@ You are an expert in Java programming, Spring Boot, Spring Framework, Gradlew, C
 
 Code Style and Structure
 
-- Write clean, efficient, and well-documented Java code with accurate Spring Boot 3 examples.
+- Write clean, efficient, and well-documented Java code with accurate Spring Boot 3.5.5 examples.
 - Use Spring Boot best practices and conventions throughout the code.
 - Implement RESTful API design patterns when creating web services.
 - Follow Domain-Driven Design (DDD) principles.
 - Structure the project into three main packages: `application`, `domain`, and `infrastructure`.
-  - **Application**: contains controllers and configurations.
-  - **Domain**: contains entities, value objects, aggregates, domain services, and interfaces.
-  - **Infrastructure**: contains persistence (repositories implementations), messaging, external clients, and framework-specific code.
+  - **Application**: contains `config`, `controller`, `model`, `validation` packages and the main `Application` class.
+  - **Domain**: contains `exceptions`, `messaging`, `model`, `repository`, `service`, and `validation` packages with business rules, entities, value objects, aggregates, domain services, and interfaces.
+  - **Infrastructure**: contains `configuration`, `external`, and `repository` packages with persistence implementations, external clients, messaging/integration and framework-specific code.
 - Use camelCase for variables and methods, PascalCase for classes, and UPPER_SNAKE_CASE for constants.
 - Keep business logic inside the `domain` layer, not in controllers or infrastructure.
-- Controllers in `infrastructure` should delegate to `application` services/use cases.
 - Ensure separation of concerns between layers with dependency direction: `infrastructure → application → domain`.
 
 Spring Boot Specifics
@@ -30,8 +29,8 @@ Naming Conventions
 
 Java and Spring Boot Usage
 
-- Use Java 17 or later features when applicable (e.g., records, sealed classes, pattern matching).
-- Leverage Spring Boot 3.x features and best practices.
+- Use Java 17 features when applicable (e.g., records, sealed classes, pattern matching).
+- Leverage Spring Boot 3.5.5 features and best practices.
 - Use Spring Data JPA for database operations when applicable.
 - Implement proper validation using Bean Validation (e.g., @Valid, custom validators).
 
@@ -45,22 +44,6 @@ Dependency Injection and IoC
 
 - Use constructor injection over field injection for better testability.
 - Leverage Spring's IoC container for managing bean lifecycles.
-
-Testing
-
-- Write unit tests using JUnit 5 with clear naming conventions.
-- Use Cucumber for behavior-driven development (BDD), writing scenarios in Gherkin and step definitions in Java.
-- Use Spring Boot Test with `@SpringBootTest` for integration testing.
-- Run integration tests with Testcontainers to provide isolated environments for:
-  - DynamoDB
-  - Redis
-  - MongoDB
-  - SNS
-  - SQS
-- Use WireMock to simulate external HTTP APIs in tests.
-- Ensure that integration tests use the same configuration as production (YAML profiles such as `bootstrap-integration-test.yml`).
-- Prefer Testcontainers over in-memory mocks to achieve production-like behavior.
-- Apply mocks/stubs only when external dependencies are not critical for the test.
 
 Performance and Scalability
 
@@ -262,7 +245,9 @@ Adhere to SOLID principles and maintain high cohesion and low coupling in your S
 
 - Use Cucumber for BDD with @BehaviorTest.java as main test runner
 - Implement comprehensive integration tests with @CucumberIntegrationTest
-- Use Testcontainers for Redis and LocalStack for SQS in tests
+- Use Testcontainers to orchestrate infrastructure containers in tests.
+- Use LocalStack (via Testcontainers) for AWS services (SNS, SQS, S3, DynamoDB).
+- Use dedicated Testcontainers for Redis and MongoDB.
 - Create feature-specific step definition classes (e.g., CreateLimitFeature, ProductUpgradeLimitIncreaseFeature)
 - Use WireMock for external API stubbing with dedicated stub classes (e.g., StubsForCardAccount, StubsForProposal)
 - Implement custom request callbacks and response results for testing
