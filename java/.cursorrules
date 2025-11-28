@@ -1,0 +1,594 @@
+You are an expert in Java programming, Spring Boot, Spring Framework, Gradlew, Cucumber, Wiremock, AWS Services, AWS SDK, JUnit, and related Java technologies.
+
+Code Style and Structure
+
+- Write clean, efficient, and well-documented Java code with accurate Spring Boot 3 examples.
+- Use Spring Boot best practices and conventions throughout the code.
+- Implement RESTful API design patterns when creating web services.
+- Follow Domain-Driven Design (DDD) principles.
+- Structure the project into three main packages: `application`, `domain`, and `infrastructure`.
+  - **Application**: contains controllers and configurations.
+  - **Domain**: contains entities, value objects, aggregates, domain services, and interfaces.
+  - **Infrastructure**: contains persistence (repositories implementations), messaging, external clients, and framework-specific code.
+- Use camelCase for variables and methods, PascalCase for classes, and UPPER_SNAKE_CASE for constants.
+- Keep business logic inside the `domain` layer, not in controllers or infrastructure.
+- Controllers in `infrastructure` should delegate to `application` services/use cases.
+- Ensure separation of concerns between layers with dependency direction: `infrastructure → application → domain`.
+
+Spring Boot Specifics
+
+- Use Spring Boot starters for quick project setup and dependency management.
+- Implement proper use of annotations (e.g., @SpringBootApplication, @RestController, @Service, @Repository, @Component).
+- Utilize Spring Boot's auto-configuration features effectively.
+- Implement proper exception handling using @ControllerAdvice and @ExceptionHandler.
+
+Naming Conventions
+
+- Use PascalCase for class names (e.g., UserController, UserService, UserServiceImpl, UserRepository, UserRepositoryImpl).
+- Use camelCase for method and variable names (e.g., findUserById, isOrderValid).
+- Use ALL_CAPS for constants (e.g., MAX_RETRY_ATTEMPTS, DEFAULT_PAGE_SIZE).
+
+Java and Spring Boot Usage
+
+- Use Java 17 or later features when applicable (e.g., records, sealed classes, pattern matching).
+- Leverage Spring Boot 3.x features and best practices.
+- Use Spring Data JPA for database operations when applicable.
+- Implement proper validation using Bean Validation (e.g., @Valid, custom validators).
+
+Configuration and Properties
+
+- Use bootstrap-integration-test.yml for configuration.
+- Implement environment-specific configurations using Spring Profiles (integration-test).
+- Use @ConfigurationProperties for type-safe configuration properties.
+
+Dependency Injection and IoC
+
+- Use constructor injection over field injection for better testability.
+- Leverage Spring's IoC container for managing bean lifecycles.
+
+Testing
+
+- Write unit tests using JUnit 5 with clear naming conventions.
+- Use Cucumber for behavior-driven development (BDD), writing scenarios in Gherkin and step definitions in Java.
+- Use Spring Boot Test with `@SpringBootTest` for integration testing.
+- Run integration tests with Testcontainers to provide isolated environments for:
+  - DynamoDB
+  - Redis
+  - MongoDB
+  - SNS
+  - SQS
+- Use WireMock to simulate external HTTP APIs in tests.
+- Ensure that integration tests use the same configuration as production (YAML profiles such as `bootstrap-integration-test.yml`).
+- Prefer Testcontainers over in-memory mocks to achieve production-like behavior.
+- Apply mocks/stubs only when external dependencies are not critical for the test.
+
+Performance and Scalability
+
+- Implement caching strategies using Spring Cache abstraction.
+- Use async processing with @Async for non-blocking operations.
+- Implement proper database indexing and query optimization.
+
+Security
+
+- Implement Spring Security for authentication and authorization.
+- Use proper password encoding (e.g., BCrypt).
+- Implement CORS configuration when necessary.
+
+Logging and Monitoring
+
+- Use SLF4J with Logback for logging.
+- Implement proper log levels (ERROR, WARN, INFO, DEBUG).
+- Use Spring Boot Actuator for application monitoring and metrics.
+
+API Documentation
+
+- Use Springdoc OpenAPI (formerly Swagger) for API documentation.
+
+Data Access and ORM
+
+- Use Spring Data JPA for database operations.
+- Implement proper entity relationships and cascading.
+- Use database migrations with tools like Flyway or Liquibase.
+
+Build and Deployment
+
+- Use Gradle for dependency management and build processes.
+- Implement proper profiles for different environments (dev, test, prod).
+- Use Docker for containerization if applicable.
+
+Follow best practices for:
+
+- RESTful API design (proper use of HTTP methods, status codes, etc.).
+- Microservices architecture (if applicable).
+
+## SOLID and DRY Principles - Universal Application
+
+### SOLID Principles (Apply to ALL Code - Tests and Implementation)
+
+- **Single Responsibility Principle (SRP)**: Every class and method must have one reason to change
+
+  - **Implementation**: Each service class should handle one business domain
+  - **Tests**: Each test class should test one specific functionality
+  - **Controllers**: Handle only HTTP concerns, delegate business logic to services
+  - **Repositories**: Handle only data access concerns
+  - **Configuration**: Each configuration class should configure one specific aspect
+
+- **Open/Closed Principle (OCP)**: Open for extension, closed for modification
+
+  - **Implementation**: Use interfaces and abstract classes for extensibility
+  - **Tests**: Create base test classes that can be extended for specific scenarios
+  - **Services**: Design with strategy pattern for different implementations
+  - **Configuration**: Use profiles and conditional beans for different environments
+
+- **Liskov Substitution Principle (LSP)**: Derived classes must be substitutable for base classes
+
+  - **Implementation**: Ensure all implementations of an interface are interchangeable
+  - **Tests**: Mock objects should behave like real objects
+  - **Inheritance**: Child classes should not break parent class contracts
+  - **Polymorphism**: All subtypes should be usable where base types are expected
+
+- **Interface Segregation Principle (ISP)**: Clients should not depend on interfaces they don't use
+
+  - **Implementation**: Create focused interfaces instead of large, monolithic ones
+  - **Tests**: Use specific test interfaces for different testing concerns
+  - **Services**: Split large service interfaces into smaller, focused ones
+  - **Repositories**: Use specific repository interfaces for different data operations
+
+- **Dependency Inversion Principle (DIP)**: Depend on abstractions, not concretions
+  - **Implementation**: Use Spring's dependency injection for all dependencies
+  - **Tests**: Mock interfaces, not concrete implementations
+  - **Configuration**: Program to interfaces, inject concrete implementations
+  - **Services**: Depend on service interfaces, not concrete service classes
+
+### DRY (Don't Repeat Yourself) Principles - Universal Application
+
+- **Code Duplication Elimination**:
+
+  - **Implementation**: Extract common business logic into utility classes or services
+  - **Tests**: Create base test classes and helper methods for common test scenarios
+  - **Configuration**: Use common configuration classes and properties
+  - **Validation**: Create reusable validators and validation groups
+  - **Error Handling**: Centralize exception handling in @ControllerAdvice
+
+- **Data Duplication Prevention**:
+
+  - **Implementation**: Use constants for repeated values, enums for fixed sets
+  - **Tests**: Create test data builders and fixtures for common test objects
+  - **Configuration**: Use @ConfigurationProperties for type-safe configuration
+  - **Messages**: Use message sources for internationalization
+  - **Logging**: Use structured logging with consistent message formats
+
+- **Logic Centralization**:
+  - **Implementation**: Create service layers for business logic, utility classes for common operations
+  - **Tests**: Use parameterized tests for similar test scenarios
+  - **Configuration**: Extract common configuration patterns into base classes
+  - **Validation**: Create custom validators for complex validation rules
+  - **Mapping**: Use MapStruct for object mapping between layers
+
+### Implementation-Specific SOLID and DRY Guidelines
+
+#### Domain Layer
+
+- **Entities**: Should only contain business logic and state, no infrastructure concerns
+- **Value Objects**: Immutable objects that represent concepts without identity
+- **Domain Services**: Pure business logic without external dependencies
+- **Repositories**: Interfaces only, no implementation details
+- **Aggregates**: Encapsulate business invariants and rules
+
+#### Application Layer
+
+- **Use Cases**: Each use case should handle one business operation
+- **DTOs**: Data transfer objects should be focused and minimal
+- **Mappers**: Use MapStruct for object transformation
+- **Validators**: Create specific validators for different validation scenarios
+- **Event Handlers**: Handle one type of event per handler
+
+#### Infrastructure Layer
+
+- **Repositories**: Implement domain repository interfaces
+- **External Clients**: Abstract external services behind interfaces
+- **Configuration**: Environment-specific configurations
+- **Messaging**: Handle one message type per consumer
+- **Persistence**: Use JPA entities only for persistence, map to domain objects
+
+#### Test Layer
+
+- **Unit Tests**: Test one method or class in isolation
+- **Integration Tests**: Test interaction between layers
+- **Test Utilities**: Create reusable test helpers and builders
+- **Test Data**: Use builders and factories for test object creation
+- **Mocks**: Mock only external dependencies, not internal business logic
+
+### Code Quality Enforcement
+
+- **Before Writing Code**:
+
+  - Identify the single responsibility of the class/method
+  - Determine if existing code can be reused
+  - Plan the interface design for extensibility
+  - Consider how the code will be tested
+
+- **During Implementation**:
+
+  - Extract constants for repeated values
+  - Create focused methods with single responsibilities
+  - Use dependency injection for all dependencies
+  - Write tests that verify the single responsibility
+
+- **After Implementation**:
+  - Verify no code duplication exists
+  - Ensure all dependencies are injected
+  - Check that interfaces are focused and minimal
+  - Validate that tests cover the single responsibility
+
+### Refactoring Triggers
+
+- **SOLID Violations**:
+
+  - Classes with multiple responsibilities
+  - Methods that do more than one thing
+  - Dependencies on concrete classes instead of interfaces
+  - Large interfaces with many methods
+  - Inheritance that breaks substitution
+
+- **DRY Violations**:
+  - Repeated code blocks
+  - Duplicate constants or values
+  - Similar test methods
+  - Repeated configuration patterns
+  - Duplicate validation logic
+
+Adhere to SOLID principles and maintain high cohesion and low coupling in your Spring Boot application design.
+
+## Project-Specific Patterns and Configurations
+
+### Build and Dependencies
+
+- Use Gradle with Spring Boot 3.5.5 and Java 17
+- Include essential dependencies: Spring Cloud, AWS SDK v2, Cucumber, Testcontainers, WireMock
+- Use specific versions for all dependencies (e.g., amazonVersion: '2.29.10', cucumberVersion: '4.7.4')
+- Configure JaCoCo for code coverage with 95% minimum coverage
+- Exclude specific packages from coverage: Application, config, controllers, models, validation, data, utils, exceptions
+
+### Architecture Patterns
+
+- Follow strict DDD with three-layer architecture: application, domain, infrastructure
+- Use MapStruct for object mapping between layers
+- Implement custom serializers/deserializers for LocalDate and Money types
+- Use JWT tokens for authentication with custom JwtHelper utility
+- Implement custom validation interceptors and resolvers
+
+### Testing Strategy
+
+- Use Cucumber for BDD with @BehaviorTest.java as main test runner
+- Implement comprehensive integration tests with @CucumberIntegrationTest
+- Use Testcontainers for Redis and LocalStack for SQS in tests
+- Create feature-specific step definition classes (e.g., CreateLimitFeature, ProductUpgradeLimitIncreaseFeature)
+- Use WireMock for external API stubbing with dedicated stub classes (e.g., StubsForCardAccount, StubsForProposal)
+- Implement custom request callbacks and response results for testing
+- Use @Before hooks with specific tags for test setup scenarios
+
+### SQS Configuration and Usage
+
+- Use AWS SDK v2 with Spring Cloud AWS SQS starter
+- Configure SQS with LocalStack for testing using @SqsTestConfiguration
+- Implement custom SqsEventConsumer base class for message processing
+- Use @SqsListener annotation for message consumption
+- Implement message validation with required attributes (AUTHORIZATION, TRAFFIC_CODE)
+- Use message attributes for routing and authentication
+- Configure SQS with specific acknowledgment modes and visibility timeouts
+
+### Redis Configuration and Usage
+
+- Use Spring Data Redis with Lettuce client
+- Configure Redis with Testcontainers for testing using @RedisTestContainerConfig
+- Implement custom RedisConfiguration for production and RedisConfigurationTest for tests
+- Use GenericJackson2JsonRedisSerializer for JSON serialization
+- Configure master-replica setup with ReadFrom preferences
+- Use RedisTemplate<String, String> for operations
+
+### Configuration Management
+
+- Use Spring Cloud Config with bootstrap-integration-test.yml for configuration
+- Implement environment-specific configurations (bootstrap-integration-test.yml, bootstrap-unicred.yml)
+- Use @ConfigurationProperties for type-safe configuration
+- Configure external service endpoints with dynamic properties
+- Use @DynamicPropertySource for test-specific property overrides
+
+### Exception Handling
+
+- Implement custom exception hierarchy with BaseException
+- Use specific exception codes for different error scenarios
+- Implement custom exception handlers with @ControllerAdvice
+- Use translated error messages with message codes
+- Implement proper HTTP status code mapping
+
+### Logging and Monitoring
+
+- Use SLF4J with Logback for logging
+- Implement custom MemoryAppender for test log verification
+- Use structured logging with message context
+- Configure different log levels for different environments
+- Implement proper error logging with stack traces
+
+### API Design
+
+- Use OpenAPI/Swagger for API documentation
+- Implement proper HTTP status codes and error responses
+- Use custom validation annotations and resolvers
+- Implement proper request/response models with validation
+- Use Feign clients for external service integration
+
+### Test Data Management
+
+- Use JSON fixtures in test/resources/fixture/ directory
+- Organize fixtures by service (authorizertransaction, cardaccount, customer, etc.)
+- Use dynamic fixture loading with JsonMapper utility
+- Implement test data builders for complex scenarios
+
+### SOLID and DRY Implementation Checklist
+
+#### Before Writing Any Code:
+
+- [ ] **SRP Check**: What is the single responsibility of this class/method?
+- [ ] **DRY Check**: Does similar functionality already exist?
+- [ ] **OCP Check**: How can this be extended without modification?
+- [ ] **LSP Check**: Will this work with all expected subtypes?
+- [ ] **ISP Check**: Are all interface methods actually needed?
+- [ ] **DIP Check**: Am I depending on abstractions, not concretions?
+
+#### During Code Implementation:
+
+- [ ] **Constants**: Extract all magic numbers and strings
+- [ ] **Methods**: Keep methods focused on single responsibility
+- [ ] **Classes**: Each class should have one reason to change
+- [ ] **Interfaces**: Create focused, minimal interfaces
+- [ ] **Dependencies**: Inject all dependencies through constructor
+- [ ] **Reusability**: Extract common logic into utility classes
+
+#### After Code Implementation:
+
+- [ ] **Duplication**: Scan for repeated code patterns
+- [ ] **Testing**: Write tests that verify single responsibility
+- [ ] **Documentation**: Update documentation if interfaces change
+- [ ] **Refactoring**: Identify areas for improvement
+- [ ] **Code Review**: Verify SOLID and DRY compliance
+
+### Practical SOLID and DRY Examples
+
+#### Good SOLID Implementation:
+
+```java
+// SRP: Single responsibility for user validation
+@Service
+public class UserValidationService {
+    public boolean isValidUser(User user) { /* validation logic */ }
+}
+
+// OCP: Open for extension via strategy pattern
+public interface PaymentProcessor {
+    void processPayment(Payment payment);
+}
+
+// LSP: All implementations are substitutable
+public class CreditCardProcessor implements PaymentProcessor { /* */ }
+public class PayPalProcessor implements PaymentProcessor { /* */ }
+
+// ISP: Focused interface
+public interface UserRepository {
+    Optional<User> findById(Long id);
+    User save(User user);
+}
+
+// DIP: Depend on abstraction
+@Service
+public class OrderService {
+    private final PaymentProcessor paymentProcessor;
+    private final UserRepository userRepository;
+
+    public OrderService(PaymentProcessor paymentProcessor, UserRepository userRepository) {
+        this.paymentProcessor = paymentProcessor;
+        this.userRepository = userRepository;
+    }
+}
+```
+
+#### Good DRY Implementation:
+
+```java
+// Extract constants
+public class Constants {
+    public static final String DEFAULT_CURRENCY = "USD";
+    public static final int MAX_RETRY_ATTEMPTS = 3;
+}
+
+// Create utility classes for common operations
+public class ValidationUtils {
+    public static boolean isValidEmail(String email) { /* */ }
+    public static boolean isValidPhone(String phone) { /* */ }
+}
+
+// Use builders for complex object creation
+public class UserBuilder {
+    private String name;
+    private String email;
+
+    public UserBuilder withName(String name) { this.name = name; return this; }
+    public UserBuilder withEmail(String email) { this.email = email; return this; }
+    public User build() { return new User(name, email); }
+}
+
+// Parameterized tests instead of duplicate test methods
+@ParameterizedTest
+@ValueSource(strings = {"user@test.com", "admin@test.com"})
+void shouldValidateEmail(String email) {
+    assertTrue(ValidationUtils.isValidEmail(email));
+}
+```
+
+## Code Review and Refactoring Best Practices
+
+### SOLID Principles Application
+
+- **Single Responsibility Principle (SRP)**: Each class and method should have one reason to change
+
+  - Extract methods that do multiple things into smaller, focused methods
+  - Separate concerns between different layers (domain, application, infrastructure)
+  - Create utility classes for common functionality instead of duplicating code
+
+- **Open/Closed Principle (OCP)**: Classes should be open for extension but closed for modification
+
+  - Use inheritance and composition to extend functionality
+  - Create abstract base classes for common test functionality
+  - Use interfaces for dependency injection and mocking
+
+- **Liskov Substitution Principle (LSP)**: Derived classes must be substitutable for their base classes
+
+  - Ensure inheritance relationships make logical sense
+  - Override methods properly without breaking contracts
+
+- **Interface Segregation Principle (ISP)**: Clients should not depend on interfaces they don't use
+
+  - Create focused interfaces instead of large, monolithic ones
+  - Use specific interfaces for specific needs
+
+- **Dependency Inversion Principle (DIP)**: Depend on abstractions, not concretions
+  - Use dependency injection for all dependencies
+  - Program to interfaces, not implementations
+  - Use Spring's IoC container for dependency management
+
+### DRY (Don't Repeat Yourself) Principles
+
+- **Eliminate Code Duplication**:
+
+  - Extract common code into reusable methods
+  - Create base classes for shared functionality
+  - Use constants for repeated values
+  - Implement parameterized tests instead of multiple similar test methods
+
+- **Centralize Common Logic**:
+  - Create utility classes for common operations
+  - Use builder patterns for complex object creation
+  - Implement factory methods for object instantiation
+
+### Code Quality and Maintainability
+
+- **Extract Constants**: Move magic numbers and strings to named constants
+
+  - Use `private static final` for class-level constants
+  - Use `public static final` for public constants
+  - Group related constants in enums or constant classes
+
+- **Improve Method Names**: Use descriptive, intention-revealing names
+
+  - Method names should clearly indicate what they do
+  - Use verbs for methods that perform actions
+  - Use nouns for methods that return values
+
+- **Reduce Method Complexity**: Break down large methods into smaller ones
+
+  - Each method should do one thing well
+  - Use early returns to reduce nesting
+  - Extract complex logic into private methods
+
+- **Remove Dead Code**: Eliminate unused code and dependencies
+  - Remove unused imports, methods, and variables
+  - Delete empty or placeholder test classes
+  - Clean up commented-out code
+
+### Test-Specific Best Practices
+
+- **Test Structure and Organization**:
+
+  - Create base test classes for common test functionality
+  - Use `@ParameterizedTest` for similar test scenarios
+  - Group related tests using descriptive class names
+  - Use meaningful test method names that describe the scenario
+
+- **Test Data Management**:
+
+  - Create test data builders for complex objects
+  - Use constants for test data values
+  - Implement factory methods for test object creation
+  - Centralize test data in dedicated classes
+
+- **Test Configuration**:
+  - Extract common test configurations into base classes
+  - Use `@TestConfiguration` for test-specific beans
+  - Implement proper test setup and teardown
+  - Use profiles to separate test and production configurations
+
+### Refactoring Guidelines
+
+- **When to Refactor**:
+
+  - When code duplication is detected
+  - When methods become too long or complex
+  - When constants are hardcoded multiple times
+  - When test classes have similar structure
+
+- **How to Refactor**:
+
+  - Make small, incremental changes
+  - Run tests after each refactoring step
+  - Use IDE refactoring tools when possible
+  - Maintain backward compatibility during refactoring
+
+- **Refactoring Checklist**:
+  - [ ] Extract constants for repeated values
+  - [ ] Remove code duplication
+  - [ ] Improve method and variable names
+  - [ ] Break down large methods
+  - [ ] Remove unused code and imports
+  - [ ] Create base classes for common functionality
+  - [ ] Implement proper error handling
+  - [ ] Add meaningful comments where necessary
+
+### Code Review Process
+
+- **Before Making Changes**:
+
+  - Analyze the current code structure
+  - Identify areas for improvement
+  - Plan the refactoring approach
+  - Ensure tests are passing
+
+- **During Refactoring**:
+
+  - Make one change at a time
+  - Run tests frequently
+  - Maintain code functionality
+  - Document significant changes
+
+- **After Refactoring**:
+  - Verify all tests pass
+  - Check for linting errors
+  - Ensure no functionality is broken
+  - Update documentation if needed
+
+Git and Version Control
+
+- NEVER commit changes without explicit user authorization
+- Only use git add, git commit, and git push commands when the user explicitly requests it
+- Always ask for permission before creating commits, even for small changes
+- The user must explicitly say "commit" or "create a commit" to authorize git commits
+- When making changes to files, ask if you can add them to stash (git add) but wait for user approval before committing
+- Commits will only be performed when explicitly requested by the user
+
+# Regras de IA do projeto
+
+- Idioma: Sempre escreva mensagens de commit em Português do Brasil (pt-BR).
+- Estilo: Use o padrão Conventional Commits (feat, fix, chore, refactor, docs, test, ci, build, perf, style).
+- Voz: Imperativo, claro e conciso.
+- Resumo: no máximo 72 caracteres.
+- Não traduza os tipos; traduza o restante do texto para pt-BR.
+
+## Formato esperado do commit
+tipo(escopo opcional): resumo curto em pt-BR
+
+- Detalhes adicionais em pt-BR (opcional, com marcadores)
+- Contexto, motivação e efeitos colaterais (se houver)
+
+BREAKING CHANGE: descrição em pt-BR (se aplicável)
+
+Refs: #<id-issue> (opcional)  
