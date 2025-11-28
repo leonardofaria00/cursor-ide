@@ -13,6 +13,7 @@ You are an expert in Java programming, Spring Boot, Spring Framework, Gradlew, C
   - **Domain**: contains `exceptions`, `messaging`, `model`, `repository`, `service`, and `validation` packages with business rules, entities, value objects, aggregates, domain services, and interfaces.
   - **Infrastructure**: contains `configuration`, `external`, and `repository` packages with persistence implementations, external clients, messaging/integration and framework-specific code.
 - Use camelCase for variables and methods, PascalCase for classes, and UPPER_SNAKE_CASE for constants.
+- Never use the logical negation operator `!` in Java code; whenever you need to negate a boolean expression, use the static method `BooleanUtils.isFalse(...)` instead.
 - Keep business logic inside the `domain` layer, not in controllers or infrastructure.
 - Ensure separation of concerns between layers with dependency direction: `infrastructure → application → domain`.
 
